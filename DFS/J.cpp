@@ -21,10 +21,18 @@ using namespace std;
 
 vector<bool>vis;
 vector<vector<int>>adj;
-vector<int>weight;
+vector<pair<int,vector<int>>>ans;
+vector<int>s;
+int parent;
 
 void dfs(int start){
     vis[start] = 1;
+    s.push_back(start);
+    if(adj[start].size() == 0){
+        ans.push_back({s.size() , s});
+        s.clear();
+        return;
+    }
     for(auto i:adj[start]){
         if(!vis[i]){
             dfs(i);
@@ -34,47 +42,46 @@ void dfs(int start){
 
 void sol() {
     // Get Nodes , Edges
-    int n , m;cin>>n>>m;
+    int n;cin>>n;
     // Initialize All Needed Vectors using 1 indexed
     adj.resize(n+1,vector<int>());
     vis.resize(n+1,0);
     // Get Edges (m)
-    for(int i = 1;i <= m;i++){
-        int u , v;cin >> u >> v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+    for(int i = 1;i <= n;i++){
+        int temp;cin>>temp;
+        if(i == temp){
+            parent = temp;
+            continue;
+        }
+        adj[temp].push_back(i);
     }
-    bool bus = 1 , ring = 1 , start = 1;
-    int twos = 0;
-    int ones = 0;
-    int maxi = 0;
-    // for(int i = 1;i<=n;i++){
-    //     cout << "\n**************\n"<< adj[i].size() <<  "\n**************" << endl;
-    // }
-    for(int i = 1;i<=n;i++){
-        maxi = max(maxi , (int)adj[i].size());
-        if(adj[i].size() == 2)
-            twos++;
-        else if(adj[i].size() == 1)
-            ones++;
-    }
-    if(twos == n - 2 && maxi == ones)
-        cout << "bus topology";
-    else if (twos == n)
-        cout << "ring topology";
-    else if(ones == maxi && twos == 0)
-        cout << "star topology";
-    else 
-        cout << "unknown topology";
+    dfs(parent);
 }
 
 signed main() {
     fast;
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while(t--){
+        adj.clear();
+        vis.clear();
+        s.clear();
+        ans.clear();
         sol();
+        sort(ans.rbegin() , ans.rend());
+        cout << ans.size() << endl;
+        for(auto i : ans){
+            cout << i.first << endl;
+            for(auto j : i.second)
+                cout << j << " ";
+            cout << endl;
+        }
     }
     return 0;
 }
+/*
+1
+5
+3 1 3 3 1
+*/
 

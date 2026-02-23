@@ -21,8 +21,7 @@ using namespace std;
 
 vector<bool>vis;
 vector<vector<int>>adj;
-vector<int>weight;
-
+int connected = 0;
 void dfs(int start){
     vis[start] = 1;
     for(auto i:adj[start]){
@@ -44,28 +43,21 @@ void sol() {
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
-    bool bus = 1 , ring = 1 , start = 1;
-    int twos = 0;
-    int ones = 0;
-    int maxi = 0;
-    // for(int i = 1;i<=n;i++){
-    //     cout << "\n**************\n"<< adj[i].size() <<  "\n**************" << endl;
-    // }
-    for(int i = 1;i<=n;i++){
-        maxi = max(maxi , (int)adj[i].size());
-        if(adj[i].size() == 2)
-            twos++;
-        else if(adj[i].size() == 1)
-            ones++;
+    vector<int>anss;
+    for(int i = 1; i <= n;i++){
+        if(!vis[i]){
+            connected++;
+            anss.push_back(i);
+            dfs(i);
+        }
     }
-    if(twos == n - 2 && maxi == ones)
-        cout << "bus topology";
-    else if (twos == n)
-        cout << "ring topology";
-    else if(ones == maxi && twos == 0)
-        cout << "star topology";
-    else 
-        cout << "unknown topology";
+    if(connected == 1)
+        cout << 0;
+    else{
+        cout << connected - 1 << endl;
+        for(int i = 0; i < anss.size() - 1;i++)
+            cout << anss[i] << " " << anss[i+1] << endl;
+    }
 }
 
 signed main() {
