@@ -28,59 +28,74 @@ using namespace std;
 vector<int> levels;
 vector<vector<int>> adj;
 vector<bool> vis;
-priority_queue<int, vector<int>, greater<int>> nodes;
-vector<int> in_degree;
-vector<int> ans;
+int n , m , k , s;
+vector<int>goods;
+vector<unordered_set<int>>items;
+queue<int>temp;
+
+int get_cost(int i){
+    int count = 1;
+    int cos = 0;
+    while(!temp.empty()){
+        int t = temp.front();
+        temp.pop();
+        if(items[i].size() == s)
+            return cos;
+        if(!items[i].count(goods[t])){
+            items[i].insert(goods[t]);
+            cos += levels[t];
+        }
+    }
+    return cos;
+}
 
 void bfs(int start) {
+    queue<int> nodes;
+    nodes.push(start);
     vis[start] = 1;
     levels[start] = 0;
     while (!nodes.empty()) {
-        int node = nodes.top();
+        int node = nodes.front();
         nodes.pop();
-        ans.push_back(node);
-        for (auto ch : adj[node]) {
-            in_degree[ch]--;
+        for (auto ch: adj[node]) {
             if (!vis[ch]) {
-                if(in_degree[ch] == 0){
                     nodes.push(ch);
                     vis[ch] = 1;
                     levels[ch] = levels[node] + 1;
+                    temp.push(ch);
+                    if(temp.size() == s - 1)
+                        break;
                 }
             }
+            if(temp.size() == s - 1)
+                break;
         }
-    }
 }
 
-int n , m;
 void sol(){
-    cin >> n >> m;
-    adj.resize(n+1 , vector<int>());
-    vis.resize(n+1 , 0);
-    levels.resize(n+1 , -1);
-    in_degree.resize(n+1 , 0);
+    cin >> n >> m >> k >> s;
+    adj.assign(n+1 , vector<int>());
+    vis.assign(n+1 , 0);
+    levels.assign(n+1 , -1);
+    goods.resize(n+1);
+    items.assign(n+1 , unordered_set<int>());
+    for(int i = 1; i <= n;i++){
+        cin >> goods[i];
+        items[i].insert(goods[i]);
+    }
     for(int i = 1;i <= m;i++){
         int u,v;
         cin>>u>>v;
         adj[u].push_back(v);
-        in_degree[v]++;
+        adj[v].push_back(u);
     }
     for(int i = 1;i<=n;i++){
-        if(in_degree[i] == 0)
-            nodes.push(i);
+        bfs(i);
+        cout << get_cost(i) << " ";
+        vis.assign(n+1 , 0);
+        levels.assign(n+1 , -1);
     }
-    if (nodes.size() == 0){ 
-        cout << "Sandro fails.";
-        return;
-    }
-    bfs(nodes.top());
-    if(ans.size() != n)
-        cout << "Sandro fails.";
-    else{
-        for(auto i : ans)
-            cout << i << " ";
-    }
-        
+
 
 }
 
