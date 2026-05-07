@@ -20,7 +20,7 @@
 using namespace std;
 
 int n , m;
-int mini = LONG_LONG_MAX;
+int mini = LLONG_MAX;
 vector<bool>vis;
 vector<vector<int>>adj;
 vector<int>weight;
@@ -29,9 +29,8 @@ void dfs(int start){
     vis[start] = 1;
     mini = min(mini , weight[start]);
     for(auto i:adj[start]){
-        if(!vis[i]){
+        if(!vis[i])
             dfs(i);
-        }
     }
 }
 

@@ -20,35 +20,37 @@
     cout.tie(0);
 #define loop(x) for(int i = 0;i<x;i++)
 using namespace std;
-int n;
+int n,h,l,r;
 vector<int>nums;
-int dp[200001];
-int rec(int i) {
-    if(i > n)
-        return oo;
-    if(i == n)
-        return 0;
-    if(dp[i] != -1)
-        return dp[i];
-    int ch1,ch2;
-    ch1 = rec(i + nums[i] + 1);
-    ch2 = rec(i + 1) + 1;
-    return dp[i] = min(ch1 , ch2);
+int dp[2001][4002];
+int rec(int i, int sleep) {
+    while(sleep >= h)
+        sleep -= h;
+    if(dp[i][sleep] != -1)
+        return dp[i][sleep];
+    int count = 0;
+    if (l <= sleep && sleep <= r)
+        count++;
+    if (i == n)
+        return dp[i][sleep] = count;
+    int ch1 = rec(i + 1, sleep + nums[i]);
+    int ch2 = rec(i + 1, sleep + (nums[i] - 1));
+    return dp[i][sleep] = count + max(ch1, ch2);
 }
 
 void sol() {
-    cin >> n;
+    cin >> n >> h >> l >> r;
     nums.resize(n);
     loop(n)
         cin >> nums[i];
     memset(dp , -1 , sizeof(dp));
-    cout << rec(0) << endl;
+    cout << max(rec(1,nums[0]) , rec(1 , nums[0] - 1));
 }
 
 signed main() {
     fast;
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while(t--)
         sol();
     return 0;

@@ -1,3 +1,10 @@
+/*
+////////////////////   ///     ///   /////////   /////////   /////////
+      ///             ///     ///          ///      ///      ///
+      ///             ///////////     ////////       ///      ///////
+      ///             ///     ///          ///       ///      ///
+      ///             ///     ///   /////////    /////////    ///
+*/
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -22,18 +29,17 @@
 using namespace std;
 int n;
 vector<int>nums;
-int dp[200001];
-int rec(int i) {
-    if(i > n)
-        return oo;
+int dp[200001][2];
+int rec(int i , bool is_even) {
     if(i == n)
         return 0;
-    if(dp[i] != -1)
-        return dp[i];
-    int ch1,ch2;
-    ch1 = rec(i + nums[i] + 1);
-    ch2 = rec(i + 1) + 1;
-    return dp[i] = min(ch1 , ch2);
+    if(dp[i][is_even] != -1)
+        return dp[i][is_even];
+    int ch1 = rec(i + 1 , is_even);
+    int ch2 = rec(i + 1 , !is_even) + nums[i];
+    if(is_even)
+        ch2 += nums[i];
+    return dp[i][is_even] = max(ch1 , ch2);
 }
 
 void sol() {
@@ -42,13 +48,13 @@ void sol() {
     loop(n)
         cin >> nums[i];
     memset(dp , -1 , sizeof(dp));
-    cout << rec(0) << endl;
+    cout << rec(0 , 0);
 }
 
 signed main() {
     fast;
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while(t--)
         sol();
     return 0;

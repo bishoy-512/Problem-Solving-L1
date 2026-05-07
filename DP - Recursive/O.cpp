@@ -1,3 +1,10 @@
+/*
+////////////////////   ///     ///   /////////   /////////   /////////
+      ///             ///     ///          ///      ///      ///
+      ///             ///////////     ////////       ///      ///////
+      ///             ///     ///          ///       ///      ///
+      ///             ///     ///   /////////    /////////    ///
+*/
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -21,34 +28,34 @@
 #define loop(x) for(int i = 0;i<x;i++)
 using namespace std;
 int n;
-vector<int>nums;
+vector<pair<pair<int,int>,int>>nums;
 int dp[200001];
-int rec(int i) {
-    if(i > n)
-        return oo;
+int rec(int i , int curr_day) {
     if(i == n)
         return 0;
     if(dp[i] != -1)
         return dp[i];
-    int ch1,ch2;
-    ch1 = rec(i + nums[i] + 1);
-    ch2 = rec(i + 1) + 1;
-    return dp[i] = min(ch1 , ch2);
+    int ch1 = rec(i+1 , curr_day);
+    int ch2 = 0;
+    if(curr_day < nums[i].first.first)
+        ch2 = rec(i + 1, nums[i].first.second) + nums[i].second;
+    return dp[i] = max(ch1 , ch2);
 }
 
 void sol() {
     cin >> n;
     nums.resize(n);
     loop(n)
-        cin >> nums[i];
+        cin >> nums[i].first.first >> nums[i].first.second >> nums[i].second;
+    sort(nums.begin() , nums.end());
     memset(dp , -1 , sizeof(dp));
-    cout << rec(0) << endl;
+    cout << rec(0 , 1);
 }
 
 signed main() {
     fast;
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while(t--)
         sol();
     return 0;
