@@ -26,11 +26,8 @@
     cout.tie(0);
 #define loop(x) for(int i = 0;i<x;i++)
 using namespace std;
-
-int n;
+int n,m;
 vector<int>nums;
-unordered_map<int,int>freq;
-
 int dp[100001];
 
 int rec(int i) {
@@ -38,26 +35,45 @@ int rec(int i) {
         return 0;
     if(dp[i] != -1)
         return dp[i];
-    int ch1 = rec(i+1);
-    int ch2 = 0;
-    auto it = lower_bound(nums.begin() + i, nums.end(), nums[i] + 2);
-    if(it != nums.end()) {
-        int j = it - nums.begin();
-        ch2 = rec(j) + nums[i] * freq[nums[i]];
+    if(nums[i] != 0)
+        return dp[i] = rec(i+1);
+    int ch = 0;
+    int count = 0;
+    if(i - 1 >= 0 && i + 1 <= n-1){
+        for(int k = 1;k<=m;k++){
+            if(abs(k - nums[i-1]) <= 1 && abs(k - nums[i + 1] ) <= 1)
+                count++;
+        }
+        ch = count + rec(i+1);
     }
-    ch2 = max(ch2, nums[i] * freq[nums[i]]);
-    return dp[i] = max(ch1 , ch2);
+    else if(i - 1 >= 0 && nums[i-1]!=0) {
+        int temp = nums[i-1];
+        if(temp == 1 || temp == m)
+            ch = 2 + rec(i+1);
+        else
+            ch = 3 + rec(i+1);
+    }
+    else if(i + 1 <= n-1 && nums[i+1] != 0) {
+        int temp = nums[i+1];
+        if(temp == 1 || temp == m)
+            ch = 2 + rec(i+1);
+        else
+            ch = 3 + rec(i+1);
+    }
+    else
+        ch = m * rec(i + 1);
+    return dp[i] = ch;
 }
-
+/*
+3 5
+1 0 3
+*/
 void sol() {
-    cin >> n;
+    cin >> n >> m;
     nums.resize(n);
-    loop(n){
+    loop(n)
         cin >> nums[i];
-        freq[nums[i]]++;
-    }
     memset(dp , -1 , sizeof(dp));
-    sort(nums.begin(),nums.end());
     cout << rec(0);
 }
 

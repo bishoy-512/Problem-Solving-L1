@@ -20,45 +20,43 @@
 #include <climits>
 #include <cstring>
 #define int long long
+#define oo LLONG_MAX
 #define fast                 \
     ios::sync_with_stdio(0); \
     cin.tie(0);              \
     cout.tie(0);
 #define loop(x) for(int i = 0;i<x;i++)
 using namespace std;
-
-int n;
-vector<int>nums;
-unordered_map<int,int>freq;
-
+int n,m;
+vector<vector<int>>edges;
+map<int,int>in_degree;
+queue<int>nums;
 int dp[100001];
-
 int rec(int i) {
-    if(i == n)
+    if(i > n)
         return 0;
     if(dp[i] != -1)
         return dp[i];
-    int ch1 = rec(i+1);
-    int ch2 = 0;
-    auto it = lower_bound(nums.begin() + i, nums.end(), nums[i] + 2);
-    if(it != nums.end()) {
-        int j = it - nums.begin();
-        ch2 = rec(j) + nums[i] * freq[nums[i]];
-    }
-    ch2 = max(ch2, nums[i] * freq[nums[i]]);
-    return dp[i] = max(ch1 , ch2);
+    int ch1 = 0;
+    for(auto k : edges[i])
+        ch1 = max(rec(k)+1,ch1);
+    return dp[i] = ch1;
 }
 
 void sol() {
-    cin >> n;
-    nums.resize(n);
-    loop(n){
-        cin >> nums[i];
-        freq[nums[i]]++;
+    cin >> n >> m;
+    edges.resize(n+1);
+    loop(m){
+        int x,y;cin>>x>>y;
+        edges[x].push_back(y);
+        in_degree[y]++;
     }
     memset(dp , -1 , sizeof(dp));
-    sort(nums.begin(),nums.end());
-    cout << rec(0);
+    int ans = -oo;
+    for(int i = 1;i<=n;i++)
+        if(!in_degree.count(i))
+            ans = max(ans ,rec(i));
+    cout << ans;
 }
 
 signed main() {

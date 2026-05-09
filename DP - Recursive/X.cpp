@@ -26,39 +26,27 @@
     cout.tie(0);
 #define loop(x) for(int i = 0;i<x;i++)
 using namespace std;
-
-int n;
-vector<int>nums;
-unordered_map<int,int>freq;
-
-int dp[100001];
-
-int rec(int i) {
+int n,w;
+vector<pair<int,int>>nums;
+unordered_map<int,int> dp[101];
+int rec(int i , int sum) {
     if(i == n)
         return 0;
-    if(dp[i] != -1)
-        return dp[i];
-    int ch1 = rec(i+1);
+    if(dp[i].count(sum))
+        return dp[i][sum];
+    int ch1 = rec(i + 1 , sum);
     int ch2 = 0;
-    auto it = lower_bound(nums.begin() + i, nums.end(), nums[i] + 2);
-    if(it != nums.end()) {
-        int j = it - nums.begin();
-        ch2 = rec(j) + nums[i] * freq[nums[i]];
-    }
-    ch2 = max(ch2, nums[i] * freq[nums[i]]);
-    return dp[i] = max(ch1 , ch2);
+    if(sum + nums[i].first <= w)
+        ch2 = rec(i + 1 , sum + nums[i].first) + nums[i].second;
+    return dp[i][sum] = max(ch1 , ch2);
 }
 
 void sol() {
-    cin >> n;
+    cin >> n >> w;
     nums.resize(n);
-    loop(n){
-        cin >> nums[i];
-        freq[nums[i]]++;
-    }
-    memset(dp , -1 , sizeof(dp));
-    sort(nums.begin(),nums.end());
-    cout << rec(0);
+    loop(n)
+        cin >> nums[i].first >> nums[i].second;
+    cout << rec(0,0);
 }
 
 signed main() {
